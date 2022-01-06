@@ -23,6 +23,43 @@ const config = {
   measurementId: "G-FYGK3H7H83",
 };
 
+// user tárolása adatbázisban
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+    if (!userAuth) return;
+
+    const userRef = firestore.doc(`users/${userAuth.uid}`);
+
+    //const userRef = firestore.doc('users/nemletezoUserID');
+    //console.log(firestore.doc('users/nemletezoUserID'));
+    //const snapShot = await userRef.get();
+    //console.log(snapShot);
+
+    
+    
+    const snapShot = await userRef.get();
+    //console.log(snapShot);
+
+    // ha nem létezik az adat az adatbázisban, akkor létrehozzuk
+    if(!snapShot.exists) {
+        const { displayName, email } = userAuth;
+        const createdAt = new Date();
+
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        } catch (error) {
+            console.log('error creating user', error.message);
+        }
+    }
+
+    return userRef;
+    
+}
+
 firebase.initializeApp(config);
 
 export const auth = firebase.auth();
