@@ -1,6 +1,6 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
-import { connect } from 'react-redux';
+import { Switch, Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
 import "./App.css";
 
@@ -9,7 +9,7 @@ import ShopPage from "./pages/shop/shop.component";
 import SingInAndSignUpPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import Header from "./components/header/header.component";
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
-import { setCurrentUser } from './redux/user/user.actions';
+import { setCurrentUser } from "./redux/user/user.actions";
 
 class App extends React.Component {
   // a dispatch miatt már nem kell a konstruktor:
@@ -25,7 +25,6 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-
     const { setCurrentUser } = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
@@ -34,28 +33,29 @@ class App extends React.Component {
       
       createUserProfileDocument(user);
       */
-     if (userAuth) {
-       const userRef = await createUserProfileDocument(userAuth);
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
 
-       userRef.onSnapshot(snapShot => {
-         //console.log(snapShot.data());
-         //console.log(snapShot);
+        userRef.onSnapshot((snapShot) => {
+          //console.log(snapShot.data());
+          //console.log(snapShot);
 
-         setCurrentUser({
-           currentUser: {
-             id: snapShot.id,
-             ...snapShot.data()
-           }
-         }/*, () => {
+          setCurrentUser(
+            {
+              currentUser: {
+                id: snapShot.id,
+                ...snapShot.data(),
+              },
+            } /*, () => {
           console.log(this.state);
-         }*/);
+         }*/
+          );
 
-         console.log(this.state);
-       });
-       
-     } else {
-       setCurrentUser(userAuth);
-     }
+          console.log(this.state);
+        });
+      } else {
+        setCurrentUser(userAuth);
+      }
     });
   }
 
@@ -70,20 +70,34 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
-          <Route path="/signin" component={SingInAndSignUpPage} />
+          <Route
+            exact
+            path="/signin"
+            render={() =>
+              this.props.currentUser ? (
+                <Redirect to="/" />
+              ) : (
+                <SingInAndSignUpPage />
+              )
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+
 // https://react-redux.js.org/using-react-redux/connect-mapdispatch
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setCurrentUser: user => dispatch(setCurrentUser(user))
+    setCurrentUser: (user) => dispatch(setCurrentUser(user)),
     // setCurrentUser: user => dispatch({ type: 'SET_CURRENT_USER'})
-  }
-}
+  };
+};
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
