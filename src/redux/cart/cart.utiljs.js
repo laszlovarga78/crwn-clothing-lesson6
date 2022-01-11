@@ -5,7 +5,6 @@
 
 // első param az eddigi tételek, második pedig amit hozzá akarunk adni
 export const addItemToCart = (cartItems, cartItemToAdd) => {
-
   // a find visszaadja a feltételnek megfelelő első találatot
   // itt most csak azt vizsgáljuk, hogy a hozzáadandó tétel már benne van-e a kosárban
   const existingCartItem = cartItems.find(
@@ -14,7 +13,7 @@ export const addItemToCart = (cartItems, cartItemToAdd) => {
 
   /**
    * ha a tétel már benne van találat, akkor a map()-el egy új tömböt adunk vissza és a quantity-t növeljük egyel
-   */ 
+   */
   if (existingCartItem) {
     return cartItems.map((cartItem) =>
       cartItem.id === cartItemToAdd.id
@@ -26,5 +25,23 @@ export const addItemToCart = (cartItems, cartItemToAdd) => {
   /**
    * Ha nem volt benne, akkor szintén új tömböt adunk vissza: ami tartalmazza az eddigi elemeket (...cartItems, plusz az új elem quantity = 1 kezdőértékkel
    */
-  return [...cartItems, {...cartItemToAdd, quantity: 1}]
+  return [...cartItems, { ...cartItemToAdd, quantity: 1 }];
+};
+
+// removeItem funkció
+
+export const removeItemFromCart = (cartItems, cartItemToRemove) => {
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === cartItemToRemove.id
+  );
+
+  if (existingCartItem.quantity === 1) {
+    return cartItems.filter((cartItem) => cartItem.id !== cartItemToRemove.id);
+  }
+
+  return cartItems.map((cartItem) =>
+    cartItem.id === cartItemToRemove.id
+      ? { ...cartItem, quantity: cartItem.quantity - 1 }
+      : cartItem
+  );
 };

@@ -1,5 +1,5 @@
 import CartActionTypes from "./cart.types";
-import { addItemToCart } from "./cart.utiljs";
+import { addItemToCart, removeItemFromCart } from "./cart.utiljs";
 
 // kiinduló állapot
 const INITIAL_STATE = {
@@ -20,6 +20,11 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         // régi (...state.cartItems) és új cartItemek
         //cartItems: [...state.cartItems, action.payload]
         cartItems: addItemToCart(state.cartItems, action.payload),
+      };
+    case CartActionTypes.REMOVE_ITEM:
+      return {
+        ...state,
+        cartItems: removeItemFromCart(state.cartItems, action.payload),
       };
     case CartActionTypes.CLEAR_ITEM_FROM_CART:
       return {
