@@ -1,10 +1,10 @@
-import  CartActionTypes from "./cart.types";
+import CartActionTypes from "./cart.types";
 import { addItemToCart } from "./cart.utiljs";
 
 // kiinduló állapot
 const INITIAL_STATE = {
   hidden: true,
-  cartItems: []
+  cartItems: [],
 };
 
 const cartReducer = (state = INITIAL_STATE, action) => {
@@ -14,12 +14,19 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         ...state,
         hidden: !state.hidden,
       };
-      case CartActionTypes.ADD_ITEM:
+    case CartActionTypes.ADD_ITEM:
       return {
         ...state,
         // régi (...state.cartItems) és új cartItemek
         //cartItems: [...state.cartItems, action.payload]
-        cartItems: addItemToCart(state.cartItems, action.payload)
+        cartItems: addItemToCart(state.cartItems, action.payload),
+      };
+    case CartActionTypes.CLEAR_ITEM_FROM_CART:
+      return {
+        ...state,
+        cartItems: state.cartItems.filter(
+          (cartItem) => cartItem.id !== action.payload.id
+        ),
       };
     default:
       return state;
