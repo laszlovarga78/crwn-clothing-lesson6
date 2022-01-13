@@ -20,3 +20,12 @@ firestore.doc('users/QYeR7p4rIgVvaKBJ0enRjkvSmF62/cartItems/rjwWMak1vgM5azdl0V6L
 
 // ezt collectionáre is lehet alkalmazni:
 firestore.collection('users/QYeR7p4rIgVvaKBJ0enRjkvSmF62/cartItems');
+
+// --
+const myObjectToStore = { name: 'Ödön '};
+window.localStorage.setItem('myItem', JSON.stringify(myObjectToStore));
+
+// kiolvasás:
+const myRetrievedObject = window.localStorage.getItem('myItem');
+
+console.log(JSON.parse(myRetrievedObject));
