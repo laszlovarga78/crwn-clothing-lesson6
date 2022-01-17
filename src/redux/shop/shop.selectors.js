@@ -1,3 +1,4 @@
+import memoize from "lodash.memoize";
 import { createSelector } from "reselect";
 
 /**
@@ -20,11 +21,12 @@ export const selectCollections = createSelector(
 
 /**
  * A selectCollection megkapja az string formátumú url paramétert és visszatér egy createSelector függvénnyel, ami egy "curried függvény", ami visszatér egy másik függvénnyel
- * 
+ *
  */
-export const selectCollection = (collectionUrlParam) =>
+export const selectCollection = memoize((collectionUrlParam) =>
   createSelector([selectCollections], (collections) =>
     collections.find(
       (collection) => collection.id === COLLECTION_ID_MAP[collectionUrlParam]
     )
-  );
+  )
+);
