@@ -8,6 +8,11 @@ export const selectCollections = createSelector(
   (shop) => shop.collections
 );
 
+export const selectCollectionsForPreview = createSelector(
+    [selectCollections],
+    collections => Object.keys(collections).map(key => collections[key])
+)
+
 /**
  * A selectCollection megkapja az string formátumú url paramétert és visszatér egy createSelector függvénnyel, ami egy "curried függvény", ami visszatér egy másik függvénnyel
  *
